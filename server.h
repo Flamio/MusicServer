@@ -4,6 +4,7 @@
 #include <QObject>
 #include "isettings.h"
 #include "imusicfinder.h"
+#include "iplayer.h"
 
 class Server : public QObject
 {
@@ -17,6 +18,8 @@ public:
 
     void setMusicFinder(IMusicFinder *value);
 
+    void setPlayer(IPlayer *value);
+
 signals:
 
 public slots:
@@ -24,7 +27,9 @@ public slots:
 private:
     ISettings* settings;
     IMusicFinder* musicFinder;
+    IPlayer* player;
     QList<QString>* filesList;
+
 };
 
 #endif // SERVER_H

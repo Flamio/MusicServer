@@ -2,6 +2,7 @@
 #include "server.h"
 #include "settings.h"
 #include "musicfinder.h"
+#include "player.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,9 +13,11 @@ int main(int argc, char *argv[])
     Settings settings(&a);
 
     MusicFinder musicFinder(&a);
+    Player player(&a);
 
     server.setSettings(&settings);
     server.setMusicFinder(&musicFinder);
+    server.setPlayer(&player);
     server.run();
 
     return a.exec();

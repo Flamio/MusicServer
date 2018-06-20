@@ -1,4 +1,5 @@
 QT -= gui
+QT += multimedia
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
@@ -17,7 +18,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp \
     server.cpp \
     settings.cpp \
-    musicfinder.cpp
+    musicfinder.cpp \
+    player.cpp
 
 DISTFILES += \
     settings.json
@@ -27,4 +29,6 @@ HEADERS += \
     isettings.h \
     settings.h \
     imusicfinder.h \
-    musicfinder.h
+    musicfinder.h \
+    iplayer.h \
+    player.h

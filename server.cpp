@@ -22,6 +22,9 @@ void Server::run()
 
     filesList = musicFinder->getMusicFiles();
 
+    player->setList(filesList);
+
+    player->play(15);
 }
 
 void Server::setMusicFinder(IMusicFinder *value)
@@ -31,4 +34,9 @@ void Server::setMusicFinder(IMusicFinder *value)
     auto settingsObject = settings->getSettings();
     auto musicFolder = settingsObject->value("music_folder").toString();
     musicFinder->setPath(musicFolder);
+}
+
+void Server::setPlayer(IPlayer *value)
+{
+    player = value;
 }
