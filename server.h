@@ -5,6 +5,8 @@
 #include "isettings.h"
 #include "imusicfinder.h"
 #include "iplayer.h"
+#include "track.h"
+#include <QList>
 
 class Server : public QObject
 {
@@ -29,6 +31,8 @@ private:
     IMusicFinder* musicFinder;
     IPlayer* player;
     QList<QString>* filesList;
+
+    QList<MusicTrack> tracks;
 
 };
 
