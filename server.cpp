@@ -23,21 +23,33 @@ void Server::run()
 
     filesList = musicFinder->getMusicFiles();
 
+    int counter = 0;
     for(auto filepath = filesList->begin(); filepath != filesList->end(); filepath++)
     {
+        static QString previousAlbum;
         QStringList folders = filepath->remove(settings->getSettings()->value("music_folder").toString()).split("/");
 
-        MusicTrack track;
-        track.setAlbum(folders.at(1));
-        track.setArtist(folders.at(0));
-        track.setName(folders.last());
+        auto artist = folders.at(0);
+        auto album = folders.at(1);
+        auto track = folders.last();
 
-        tracks.append(track);
+        artists.insert(artist);
+
+        if (previousAlbum != album)
+            albums.insertMulti(artist, album);
+
+        tracks.insertMulti(album, QPair<int, QString>(counter, track));
+
+        previousAlbum = album;
+
+        counter++;
     }
 
     player->setList(filesList);
 
+    auto it = albums.values("Maks");
 
+    qDebug() << it;
 
     //player->play(15);
 }

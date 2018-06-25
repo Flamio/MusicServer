@@ -20,5 +20,5 @@ int main(int argc, char *argv[])
     server.setPlayer(&player);
     server.run();
 
-    return a.exec();
+     return a.exec();
 }

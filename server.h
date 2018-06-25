@@ -5,8 +5,8 @@
 #include "isettings.h"
 #include "imusicfinder.h"
 #include "iplayer.h"
-#include "track.h"
 #include <QList>
+#include <QMultiHash>
 
 class Server : public QObject
 {
@@ -32,8 +32,9 @@ private:
     IPlayer* player;
     QList<QString>* filesList;
 
-    QList<MusicTrack> tracks;
-
+    QMultiHash<QString, QPair<int, QString>> tracks;
+    QMultiHash<QString, QString> albums;
+    QSet<QString> artists;
 };
 
 #endif // SERVER_H

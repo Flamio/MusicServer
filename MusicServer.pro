@@ -19,8 +19,7 @@ SOURCES += main.cpp \
     server.cpp \
     settings.cpp \
     musicfinder.cpp \
-    player.cpp \
-    track.cpp
+    player.cpp
 
 DISTFILES += \
     settings.json
@@ -32,5 +31,4 @@ HEADERS += \
     imusicfinder.h \
     musicfinder.h \
     iplayer.h \
-    player.h \
-    track.h
+    player.h
