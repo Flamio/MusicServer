@@ -7,6 +7,7 @@
 #include "iplayer.h"
 #include <QList>
 #include <QMultiHash>
+#include <QUdpSocket>
 
 class Server : public QObject
 {
@@ -31,10 +32,13 @@ private:
     IMusicFinder* musicFinder;
     IPlayer* player;
     QList<QString>* filesList;
+    QUdpSocket socket;
 
     QMultiHash<QString, QPair<int, QString>> tracks;
     QMultiHash<QString, QString> albums;
     QSet<QString> artists;
+
+    void onReadyRead();
 };
 
 #endif // SERVER_H

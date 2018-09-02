@@ -2,10 +2,14 @@
 #include <QDebug>
 #include <QDirIterator>
 #include <QStringList>
+#include <QNetworkDatagram>
+#include <QJsonDocument>
+#include <QJsonArray>
 
 Server::Server(QObject *parent) : QObject(parent)
 {
-
+    socket.bind(QHostAddress::Any,5050);
+    connect(&socket, &QUdpSocket::readyRead, this, &Server::onReadyRead);
 }
 
 void Server::setSettings(ISettings *value)
@@ -27,7 +31,8 @@ void Server::run()
     for(auto filepath = filesList->begin(); filepath != filesList->end(); filepath++)
     {
         static QString previousAlbum;
-        QStringList folders = filepath->remove(settings->getSettings()->value("music_folder").toString()).split("/");
+        auto path = *filepath;
+        QStringList folders = path.remove(settings->getSettings()->value("music_folder").toString()).split("/");
 
         auto artist = folders.at(0);
         auto album = folders.at(1);
@@ -47,11 +52,12 @@ void Server::run()
 
     player->setList(filesList);
 
-    auto it = albums.values("Maks");
+    /* auto it =  tracks.values("2018 - Test").first();
 
-    qDebug() << it;
+    qDebug() << it.first;
+    qDebug() << it.second;
 
-    //player->play(15);
+    player->play(it.first);*/
 }
 
 void Server::setMusicFinder(IMusicFinder *value)
@@ -66,4 +72,41 @@ void Server::setMusicFinder(IMusicFinder *value)
 void Server::setPlayer(IPlayer *value)
 {
     player = value;
+}
+
+void Server::onReadyRead()
+{
+    while (socket.hasPendingDatagrams())
+    {
+        auto datagram = socket.receiveDatagram();
+        auto data = datagram.data();
+
+        auto address = datagram.destinationAddress();
+        auto port = datagram.destinationPort();
+
+        auto json = QJsonDocument::fromJson(data).object();
+
+        auto query = json.value("query").toString();
+
+        if (query == "artist")
+        {
+            QJsonObject jsonObject;
+            QJsonArray array;
+            for(auto artist = artists.begin(); artist != artists.end(); artist++)
+            {
+                array.push_back(*artist);
+            }
+            jsonObject.insert("artists", array);
+            QJsonDocument doc(jsonObject);
+            auto answer = doc.toJson();
+            qDebug() << answer;
+
+            socket.writeDatagram(answer, address, 5051);
+
+            qDebug() << address;
+            qDebug() << port;
+
+            break;
+        }
+    }
 }

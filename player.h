@@ -10,6 +10,7 @@ class Player : public QObject, public IPlayer
     Q_OBJECT
 public:
     explicit Player(QObject *parent = nullptr);
+    virtual ~Player();
 
     virtual void play(int id);
     virtual void setList(QList<QString> *value);
