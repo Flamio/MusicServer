@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QDirIterator>
 #include <QStringList>
-#include <QNetworkDatagram>
+//#include <QNetworkDatagram>
 #include <QJsonDocument>
 #include <QJsonArray>
 
@@ -26,6 +26,8 @@ void Server::run()
     }
 
     filesList = musicFinder->getMusicFiles();
+
+    qSort(filesList->begin(),filesList->end(),[](QString& a, QString& b) { return a > b; });
 
     int counter = 0;
     for(auto filepath = filesList->begin(); filepath != filesList->end(); filepath++)
@@ -52,12 +54,12 @@ void Server::run()
 
     player->setList(filesList);
 
-    /* auto it =  tracks.values("2018 - Test").first();
+     auto it =  tracks.values("2018 - План Ломоносова IV").first();
 
     qDebug() << it.first;
     qDebug() << it.second;
 
-    player->play(it.first);*/
+    player->play(it.first);
 }
 
 void Server::setMusicFinder(IMusicFinder *value)
@@ -76,7 +78,7 @@ void Server::setPlayer(IPlayer *value)
 
 void Server::onReadyRead()
 {
-    while (socket.hasPendingDatagrams())
+  /*  while (socket.hasPendingDatagrams())
     {
         auto datagram = socket.receiveDatagram();
         auto data = datagram.data();
@@ -108,5 +110,5 @@ void Server::onReadyRead()
 
             break;
         }
-    }
+    }*/
 }

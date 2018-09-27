@@ -5,7 +5,7 @@
 
 Settings::Settings(QObject *parent) : QObject(parent)
 {
-    QFile file("settings.json");
+    QFile file("/etc/MusicServer/settings.json");
     file.open(QIODevice::ReadOnly);
     auto data = file.readAll();
     settings = QJsonDocument::fromJson(data).object();
