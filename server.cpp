@@ -54,7 +54,7 @@ void Server::run()
 
     player->setList(filesList);
 
-     auto it =  tracks.values("2018 - План Ломоносова IV").first();
+     auto it =  tracks.values("2010 - Клуб Здоровья").at(1);
 
     qDebug() << it.first;
     qDebug() << it.second;

@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include "iplayer.h"
-#include <QMediaPlayer>
+#include "abstractReceiver.h"
 
 class Player : public QObject, public IPlayer
 {
@@ -20,7 +20,7 @@ signals:
 public slots:
 private:
     QList<QString>* list;
-    QMediaPlayer player;
+    GstreamerPlayer* player;
 };
 
 #endif // PLAYER_H

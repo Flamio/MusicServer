@@ -7,8 +7,9 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+    gst_init(&argc, &argv);
 
-    Server server(&a);
+   Server server(&a);
 
     Settings settings(&a);
 
