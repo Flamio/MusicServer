@@ -2,73 +2,18 @@
 #include <QDebug>
 #include <QDirIterator>
 #include <QStringList>
-//#include <QNetworkDatagram>
 #include <QJsonDocument>
 #include <QJsonArray>
 
 Server::Server(QObject *parent) : QObject(parent)
 {
-    socket.bind(QHostAddress::Any,5050);
-    connect(&socket, &QUdpSocket::readyRead, this, &Server::onReadyRead);
-}
-
-void Server::setSettings(ISettings *value)
-{
-    settings = value;
+    server.listen(QHostAddress::Any, 5050);
+    connect(&server, &QTcpServer::newConnection, this, &Server::onNewConnection);
 }
 
 void Server::run()
 {
-    if (!settings)
-    {
-        qDebug() << "settings.json not found";
-        return;
-    }
 
-    filesList = musicFinder->getMusicFiles();
-
-    qSort(filesList->begin(),filesList->end(),[](QString& a, QString& b) { return a > b; });
-
-    int counter = 0;
-    for(auto filepath = filesList->begin(); filepath != filesList->end(); filepath++)
-    {
-        static QString previousAlbum;
-        auto path = *filepath;
-        QStringList folders = path.remove(settings->getSettings()->value("music_folder").toString()).split("/");
-
-        auto artist = folders.at(0);
-        auto album = folders.at(1);
-        auto track = folders.last();
-
-        artists.insert(artist);
-
-        if (previousAlbum != album)
-            albums.insertMulti(artist, album);
-
-        tracks.insertMulti(album, QPair<int, QString>(counter, track));
-
-        previousAlbum = album;
-
-        counter++;
-    }
-
-    player->setList(filesList);
-
-     auto it =  tracks.values("2010 - Клуб Здоровья").at(1);
-
-    qDebug() << it.first;
-    qDebug() << it.second;
-
-    player->play(it.first);
-}
-
-void Server::setMusicFinder(IMusicFinder *value)
-{
-    musicFinder = value;
-
-    auto settingsObject = settings->getSettings();
-    auto musicFolder = settingsObject->value("music_folder").toString();
-    musicFinder->setPath(musicFolder);
 }
 
 void Server::setPlayer(IPlayer *value)
@@ -78,37 +23,48 @@ void Server::setPlayer(IPlayer *value)
 
 void Server::onReadyRead()
 {
-  /*  while (socket.hasPendingDatagrams())
+    auto socket = dynamic_cast<QTcpSocket*>(sender());
+    auto query = socket->readAll();
+
+
+
+    socket->write("lol");
+    socket->waitForBytesWritten();
+
+    /*auto headers = parseHeaders(query);
+
+    for (auto socket : sockets)
     {
-        auto datagram = socket.receiveDatagram();
-        auto data = datagram.data();
+        socket->close();
+        delete socket;
+    }
 
-        auto address = datagram.destinationAddress();
-        auto port = datagram.destinationPort();
+    sockets.clear();*/
+}
 
-        auto json = QJsonDocument::fromJson(data).object();
+void Server::onNewConnection()
+{
+    auto socket = server.nextPendingConnection();
+    sockets.append(socket);
+    connect(socket, &QTcpSocket::readyRead, this, &Server::onReadyRead);
 
-        auto query = json.value("query").toString();
+    clientConnected = true;
+}
 
-        if (query == "artist")
-        {
-            QJsonObject jsonObject;
-            QJsonArray array;
-            for(auto artist = artists.begin(); artist != artists.end(); artist++)
-            {
-                array.push_back(*artist);
-            }
-            jsonObject.insert("artists", array);
-            QJsonDocument doc(jsonObject);
-            auto answer = doc.toJson();
-            qDebug() << answer;
+QMap<QByteArray, QByteArray> Server::parseHeaders(QByteArray httpHeaders)
+{
+    QMap<QByteArray, QByteArray> headers;
 
-            socket.writeDatagram(answer, address, 5051);
+    // Discard the first line
+    httpHeaders = httpHeaders.mid(httpHeaders.indexOf('\n') + 1).trimmed();
 
-            qDebug() << address;
-            qDebug() << port;
+    foreach(QByteArray line, httpHeaders.split('\n')) {
+        int colon = line.indexOf(':');
+        QByteArray headerName = line.left(colon).trimmed();
+        QByteArray headerValue = line.mid(colon + 1).trimmed();
 
-            break;
-        }
-    }*/
+        headers.insertMulti(headerName, headerValue);
+    }
+
+    return headers;
 }

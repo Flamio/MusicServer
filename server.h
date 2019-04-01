@@ -7,20 +7,15 @@
 #include "iplayer.h"
 #include <QList>
 #include <QMultiHash>
-#include <QUdpSocket>
+#include <QTcpServer>
+#include <QTcpSocket>
 
 class Server : public QObject
 {
     Q_OBJECT
 public:
     explicit Server(QObject *parent = nullptr);
-
-    void setSettings(ISettings *value);
-
     void run();
-
-    void setMusicFinder(IMusicFinder *value);
-
     void setPlayer(IPlayer *value);
 
 signals:
@@ -28,17 +23,15 @@ signals:
 public slots:
 
 private:
-    ISettings* settings;
-    IMusicFinder* musicFinder;
     IPlayer* player;
-    QList<QString>* filesList;
-    QUdpSocket socket;
-
-    QMultiHash<QString, QPair<int, QString>> tracks;
-    QMultiHash<QString, QString> albums;
-    QSet<QString> artists;
+    QTcpServer server;
+    QList<QTcpSocket*> sockets;
+    bool clientConnected = false;
 
     void onReadyRead();
+    void onNewConnection();
+
+    QMap<QByteArray, QByteArray> parseHeaders(QByteArray httpHeaders);
 };
 
 #endif // SERVER_H

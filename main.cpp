@@ -11,15 +11,9 @@ int main(int argc, char *argv[])
 
    Server server(&a);
 
-    Settings settings(&a);
-
-    MusicFinder musicFinder(&a);
     Player player(&a);
 
-    server.setSettings(&settings);
-    server.setMusicFinder(&musicFinder);
     server.setPlayer(&player);
     server.run();
-
-     return a.exec();
+    return a.exec();
 }

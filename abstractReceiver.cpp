@@ -17,7 +17,7 @@ GstreamerPlayer::~GstreamerPlayer()
 
 void GstreamerPlayer::startInThread()
 {
-    auto pipeline = QString("filesrc location=\"%1\" ! decodebin ! audioconvert ! audioresample ! alsasink device=hw:0").arg(fileName);
+    auto pipeline = QString("filesrc location=\"%1\" ! decodebin ! audioconvert ! audioresample ! alsasink device=hw:2").arg(fileName);
     app.pipeline = gst_parse_launch(pipeline.toStdString().c_str(), NULL);
     app.loop = g_main_loop_new (NULL, TRUE);
 

@@ -1,5 +1,4 @@
 #include "player.h"
-#include <QMediaContent>
 
 Player::Player(QObject *parent) : QObject(parent), player(nullptr)
 {
